@@ -16,6 +16,9 @@ type Config struct {
 	FetchInterval        time.Duration `hcl:"fetch_interval" env:"FETCH_INTERVAL" default:"10m"`
 	NotificationInterval time.Duration `hcl:"notification_interval" env:"NOTIFICATION_INTERVAL" default:"1m"`
 	FilterKeywords       []string      `hcl:"filter_keywords" env:"FILTER_KEYWORDS"`
+	OpenAIKey            string        `hcl:"openai_key" env:"OPENAI_KEY"`
+	OpenAIPrompt         string        `hcl:"openai_prompt" env:"OPENAI_PROMPT"`
+	OpenAIModel          string        `hcl:"openai_model" env:"OPENAI_MODEL" default:"gpt-3.5-turbo"`
 }
 
 var (
@@ -26,17 +29,19 @@ var (
 func Get() Config {
 	once.Do(func() {
 		loader := aconfig.LoaderFor(&cfg, aconfig.Config{
-			EnvPrefix: "NTB", // news telegram bot
-			Files:     []string{"./config.hcl", "./config.local.hcl"},
+			EnvPrefix: "NTB",
+			// N ews
+			// T elegram
+			// B ot
+			Files: []string{"./config.hcl", "./config.local.hcl", "$HOME/.config/news-feed-bot/config.hcl"},
 			FileDecoders: map[string]aconfig.FileDecoder{
-				"hcl": aconfighcl.New(),
+				".hcl": aconfighcl.New(),
 			},
 		})
 
 		if err := loader.Load(); err != nil {
-			log.Fatalf("Can't load config %v", err.Error())
+			log.Printf("[ERROR] failed to load config: %v", err)
 		}
-
 	})
 
 	return cfg

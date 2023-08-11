@@ -58,6 +58,7 @@ func main() {
 
 	newsBot := botkit.New(botAPI)
 	newsBot.RegisterCmdView("start", bot.ViewCmdStart()) // /start
+	newsBot.RegisterCmdView("help", bot.ViewCmdHelp())   // /help
 	newsBot.RegisterCmdView("add", middleware.AdminOnly(
 		config.Get().TelegramChannelID,
 		bot.ViewCmdSource(sourceStorage),
@@ -66,6 +67,10 @@ func main() {
 		config.Get().TelegramChannelID,
 		bot.ViewCmdListSources(sourceStorage),
 	)) // /list
+	newsBot.RegisterCmdView("delete", middleware.AdminOnly(
+		config.Get().TelegramChannelID,
+		bot.ViewCmdDelete(sourceStorage),
+	)) // /delete 2
 
 	// TODO: more admin commands
 
@@ -89,16 +94,16 @@ func main() {
 
 	_ = notifier
 
-	// go func(ctx context.Context) {
-	// 	if err := notifier.Start(ctx); err != nil {
-	// 		if !errors.Is(err, context.Canceled) {
-	// 			log.Printf("failed to start notifier: %w", err)
-	// 			return
-	// 		}
+	go func(ctx context.Context) {
+		if err := notifier.Start(ctx); err != nil {
+			if !errors.Is(err, context.Canceled) {
+				log.Printf("failed to start notifier: %w", err)
+				return
+			}
 
-	// 		log.Printf("notifier stopped")
-	// 	}
-	// }(ctx)
+			log.Printf("notifier stopped")
+		}
+	}(ctx)
 
 	if err := newsBot.Run(ctx); err != nil {
 		if !errors.Is(err, context.Canceled) {

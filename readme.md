@@ -6,9 +6,9 @@ The bot collects news from sources using RSS, and the field sends news to the te
 _/help_ and _/start_ for help information.  
 **Admin commands:**  
 (only admins of channel can use it)  
-/add NAME, URL - add new source  
-/list - get all sources  
-/delete ID - delete source   
+_/add **NAME**, **URL**_ - add new source  
+_/list_ - get all sources  
+_/delete **ID**_ - delete source   
 ## How to start bot
 - Create new bot in BotFather
 - In BotFather fro your bot set "Group privacy" - OFF 
